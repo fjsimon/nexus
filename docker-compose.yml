@@ -12,6 +12,6 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - nexusstore-database:/var/lib/mysql
+      - ${dbvolumes}:/var/lib/mysql
 volumes:
   nexusstore-database:
