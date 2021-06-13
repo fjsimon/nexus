@@ -1,0 +1,4 @@
+CREATE TABLE node_link (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  link varchar(256) DEFAULT NULL
+);
