@@ -51,7 +51,7 @@ class LinksComponent extends Component {
             )
     }
 
-    listItems = () => this.state.links.map(item => (
+    listItems = () => !!this.state.links && this.state.links.map(item => (
         <li key={item.id}>
             <a href={item.link}>{item.link}</a>
         </li>
