@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class UrlBuilderTest {
@@ -59,4 +60,28 @@ public class UrlBuilderTest {
 
         assertThat(linkBuilder.build(), is("localhost/books?bibkeys=ISBN:isbn&jscmd=jscmd&format=format&param1=param1"));
     }
+
+    @Test
+    public void link_builder_same_var_exceptions_test() {
+
+        UrlBuilder.Spec spec = new UrlBuilder.Spec("#{baseUrl}/books?bibkeys=ISBN:#{isbn}&jscmd=#{jscmd}&format=#{format}");
+        UrlBuilder.LinkBuilder linkBuilder = testee.aLink(spec);
+        linkBuilder.with("isbn", "isbn");
+        assertThrows(IllegalStateException.class, () -> {
+            linkBuilder.with("isbn", "isbn");
+        });
+
+    }
+
+    @Test
+    public void link_builder_different_type_exceptions_test() {
+
+        UrlBuilder.Spec spec = new UrlBuilder.Spec("#{baseUrl}/books?bibkeys=ISBN:#{isbn}&jscmd=#{jscmd}&format=#{format}");
+        UrlBuilder.LinkBuilder linkBuilder = testee.aLink(spec);
+        linkBuilder.with("isbn", "isbn");
+        assertThrows(IllegalStateException.class, () -> {
+            linkBuilder.with("unknowed", "unknowed");
+        });
+    }
+
 }
