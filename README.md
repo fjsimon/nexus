@@ -1,7 +1,34 @@
-# Extending, Securing and Dockerizing Spring Boot Microservices
+# Nexus Microservice
+
+#### Create database docker
+
+Using the terminal run following command:
+
+``
+sudo docker-compose up
+``
+
+#### Startup & Build
+
+Build the project using following command:
+
+``
+mvn clean install
+`` 
+
+#### mariadb profile, MariaDB database (requires running container)
+
+Run the project using following command from the service folder:
+
+``
+spring-boot:run -Dspring-boot.run.profiles=mariadb 
+``
+
+Check that environment.properties file contains the right properties.
 
 
 #### Setup
+
 Set JAVA_HOME
 
 Set M2_HOME
@@ -10,11 +37,12 @@ Add M2_HOME/bin to the execution path
 
 mvn package -DskipTests
 
+
 #### Docker Commands
 
 ##### Start MySql Container (downloads image if not found)
 ``
-docker run  --detach   --name ec-mysql -p 6604:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=explorecali -e MYSQL_USER=cali_user -e MYSQL_PASSWORD=cali_pass -d mysql
+docker run  --detach   --name ec-name -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=database -e MYSQL_USER=user -e MYSQL_PASSWORD=password -d mysql
 ``
 
 ##### view all images
@@ -22,7 +50,7 @@ docker run  --detach   --name ec-mysql -p 6604:3306 -e MYSQL_ROOT_PASSWORD=passw
 docker images
 ``
 
-##### view all containers (running or not)
+##### view all containers
 ``
 docker ps -a
 ``
@@ -46,79 +74,3 @@ docker rm ec-mysql
 ``
 docker rmi mysql:latest
 ``
-#### Startup with Profile settings
-
-##### Default profile, H2 database
-``
-mvn spring-boot:run
-``
-
-or
-
-``
-java  -jar target/explorecali-2.0.0-SNAPSHOT.jar
-``
-##### mysql profile, MySql database (requires running container ec-mysql)
-``
-mvn spring-boot:run -Dspring.profiles.active=mysql 
-``
-
-or
-
-``
-java  -Dspring.profiles.active=mysql -jar target/explorecali-2.0.0-SNAPSHOT.jar
-``
-#### Dockerize Explore California
-
-##### Build jar, image, set default profile
-``
-mvn package -DskipTests docker:build 
-``
-###### container with default property set in Dockerfile
-``
-docker run --name ec-app-default -p 8080:8080  -d explorecali-default
-``
-##### Build jar, image, set mysql profile
-``
-mvn package -DskipTests docker:build -Dec-profile=mysql
-``
-##### Run Docker container with mysql profile
-``
-docker run    --name ec-app-mysql -p 8181:8080  --link ec-mysql:mysql -d explorecali-mysql
-``
-##### Build jar, image, set docker profile
-``
-mvn package -DskipTests docker:build -Dec-profile=docker
-``
-##### Run Docker container with docker profile set in Dockerfile and migration scripts on host
-``
-docker run --name ec-app-docker -p 8282:8080 -v ~/db/migration:/var/migration -e server=ec-mysql -e port=3306 -e dbuser=cali_user -e dbpassword=cali_pass --link ec-mysql:mysql -d explorecali-docker
-``
-##### Enter Docker container
-``
-docker exec -t -i ec-app /bin/bash
-``
-
-##### Push image to Docker hub
-
-######Login to Docker hub locally
-``docker login``
-###### Upload image
-``
-docker tag <image id> <docker hub repository>/explorecali-default:latest
-``
-###### Download image
-``
-docker pull <docker hub repository>/explorecali-default
-``
-##### Run Container from docker hub image
-``
-docker run --name ec-app-default -p 8080:8080  -d <docker hub repository>/explorecali-default``
-
-
-
-
-
-
-
-
