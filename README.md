@@ -16,6 +16,14 @@ Build the project using following command:
 mvn clean install
 `` 
 
+#### default profile, H2 database 
+
+Run the project using following command from the service folder:
+
+``
+spring-boot:run
+``
+
 #### mariadb profile, MariaDB database (requires running container)
 
 Run the project using following command from the service folder:
