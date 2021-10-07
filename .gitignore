@@ -5,3 +5,4 @@ logs/
 
 *.p12
 *.db
+**/environment.properties
