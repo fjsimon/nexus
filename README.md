@@ -5,6 +5,10 @@
 Using the terminal run following command:
 
 ``
+sudo service docker start
+``
+
+``
 sudo docker-compose up
 ``
 
