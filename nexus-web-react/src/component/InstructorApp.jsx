@@ -30,9 +30,6 @@ class InstructorApp extends Component {
                             <li>
                               <Link to="/books">Books</Link>
                             </li>
-                            <li>
-                              <Link to="/vue">Vue</Link>
-                            </li>
                           </ul>
 
                         <Switch>
