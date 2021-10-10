@@ -33,9 +33,6 @@ class InstructorApp extends Component {
                           </ul>
 
                         <Switch>
-{/*                             <Route path="/" exact component={LoginComponent} /> */}
-{/*                             <Route path="/login" exact component={LoginComponent} /> */}
-{/*                             <AuthenticatedRoute path="/logout" exact component={LogoutComponent} /> */}
                             <Route path="/" exact component={LinksComponent} />
                             <Route path="/links" exact component={LinksComponent} />
                             <Route path="/books" exact component={BooksComponent} />
