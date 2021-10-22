@@ -8,11 +8,12 @@ class LinksComponent extends Component {
         super(props)
         this.state = {
             links: [],
+            checkedBoxes:[],
             value: '',
             activePage: 1,
             totalPages: null,
-            itemsCountPerPage:null,
-            totalItemsCount:null
+            itemsCountPerPage:0,
+            totalItemsCount:0
         }
         this.refreshLinks = this.refreshLinks.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -28,7 +29,7 @@ class LinksComponent extends Component {
     }
 
     handlePageChange(pageNumber) {
-        console.log('active page is ${pageNumber}');
+        console.log('active page is ' + pageNumber);
         this.setState({activePage: pageNumber});
         this.refreshLinks(pageNumber);
     }
@@ -37,6 +38,18 @@ class LinksComponent extends Component {
         console.log('A name was submitted: ' + this.state.value);
         LinkDataService.saveLink(this.state.value);
         event.preventDefault();
+    }
+
+    handleCheckbox = (e, s) => {
+
+        const checkedBoxes = [...this.state.checkedBoxes];
+        if(e.target.checked) {
+          checkedBoxes.push(s);
+        } else {
+          const index = checkedBoxes.findIndex((ch) => ch.id === s.id);
+          checkedBoxes.splice(index, 1);
+        }
+        this.setState({checkedBoxes});
     }
 
     refreshLinks(page) {
@@ -53,6 +66,11 @@ class LinksComponent extends Component {
 
     listItems = () => !!this.state.links && this.state.links.map(item => (
         <li key={item.id}>
+            <input type="checkbox"
+                   value={item.id}
+
+                   onChange = {(e) => this.handleCheckbox(e, item)}
+            />
             <a href={item.link}>{item.link}</a>
         </li>
     ));
