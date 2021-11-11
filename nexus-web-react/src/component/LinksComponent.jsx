@@ -37,6 +37,7 @@ class LinksComponent extends Component {
     handleSubmit(event) {
         console.log('A name was submitted: ' + this.state.value);
         LinkDataService.saveLink(this.state.value);
+        this.setState({value: ''});
         event.preventDefault();
     }
 
@@ -80,8 +81,8 @@ class LinksComponent extends Component {
             <div className="App">
                 <fieldset>
                 <form onSubmit={this.handleSubmit}>
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
-                    <input type="submit" value="+" />
+                    <input type="text" placeholder="Copy a link ..." value={this.state.value} onChange={this.handleChange} />
+                    <input type="submit" value="add" />
                 </form>
                 </fieldset>
                 <ul className="container">{this.listItems()}</ul>
