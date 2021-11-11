@@ -41,6 +41,12 @@ class LinksComponent extends Component {
         event.preventDefault();
     }
 
+    handleDelete = (e, s) => {
+        const checkedBoxes = [...this.state.checkedBoxes];
+        console.log('checkedBoxes : ' + checkedBoxes.map(s => s.id));
+        e.preventDefault();
+    }
+
     handleCheckbox = (e, s) => {
 
         const checkedBoxes = [...this.state.checkedBoxes];
@@ -81,8 +87,18 @@ class LinksComponent extends Component {
             <div className="App">
                 <fieldset>
                 <form onSubmit={this.handleSubmit}>
-                    <input type="text" placeholder="Copy a link ..." value={this.state.value} onChange={this.handleChange} />
-                    <input type="submit" value="add" />
+                    <input type="text"
+                        placeholder="Copy a link ..."
+                        value={this.state.value}
+                        onChange={this.handleChange} />
+
+                    <input type="submit"
+                        value="add" />
+
+                    <input type="button"
+                        value="delete"
+                        onClick={this.handleDelete}
+                        disabled={!this.state.checkedBoxes.length}/>
                 </form>
                 </fieldset>
                 <ul className="container">{this.listItems()}</ul>
