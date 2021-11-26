@@ -14,10 +14,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,7 +54,7 @@ public class NodeLinkControllerTest {
 
     @WithMockUser("spring")
     @Test
-    public void paramLinks() throws Exception {
+    public void getNodeLink() throws Exception {
 
         when(nodeLinkServiceMock.lookupNodeLinkById(1)).thenReturn(new NodeLink("link"));
 
@@ -61,5 +63,17 @@ public class NodeLinkControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.link").value("link"));
     }
+
+    @WithMockUser("spring")
+    @Test
+    public void deleteNodeLinks() throws Exception {
+
+        this.mockMvc.perform(delete("/links?nodeLinkIds={nodeLinkIds}", "1,2"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(nodeLinkServiceMock, times(1)).deleteNodeLinkList(Arrays.asList(1L, 2L));
+    }
+
 
 }

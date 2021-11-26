@@ -19,6 +19,11 @@ class LinkDataService {
 
         return axios.get(`${API_URL}/links?page=${page}&size=10`);
     }
+
+    deleteLinks(linkIds) {
+
+        return axios.delete(`${API_URL}/links?nodeLinkIds=${linkIds}`);
+    }
 }
 
 export default new LinkDataService()

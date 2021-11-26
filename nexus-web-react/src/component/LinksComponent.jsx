@@ -43,7 +43,9 @@ class LinksComponent extends Component {
 
     handleDelete = (e, s) => {
         const checkedBoxes = [...this.state.checkedBoxes];
-        console.log('checkedBoxes : ' + checkedBoxes.map(s => s.id));
+        let checkedOptions = checkedBoxes.map(s => s.id);
+        console.log('checkedBoxes : ' + checkedOptions);
+        LinkDataService.deleteLinks(checkedOptions);
         e.preventDefault();
     }
 

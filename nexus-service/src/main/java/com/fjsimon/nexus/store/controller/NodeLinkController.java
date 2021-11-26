@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -29,6 +30,13 @@ public class NodeLinkController {
     public void createNodeLink(@RequestBody @Valid LinkDto link) {
 
         nodeLinkService.createNodeLink(link.getLink());
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteNodeLinks(@RequestParam List<Long> nodeLinkIds) {
+
+        nodeLinkService.deleteNodeLinkList(nodeLinkIds);
     }
 
     @GetMapping("/{nodeLinkId}")

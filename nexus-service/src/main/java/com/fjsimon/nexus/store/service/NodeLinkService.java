@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -35,4 +37,9 @@ public class NodeLinkService {
         nodeLinkRepository.save(new NodeLink(link));
     }
 
+    @Transactional
+    public void deleteNodeLinkList(List<Long> ids) {
+
+        nodeLinkRepository.deleteByIdIn(ids);
+    }
 }
