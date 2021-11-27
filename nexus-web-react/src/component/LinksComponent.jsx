@@ -18,6 +18,7 @@ class LinksComponent extends Component {
         this.refreshLinks = this.refreshLinks.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     componentDidMount() {
@@ -36,7 +37,10 @@ class LinksComponent extends Component {
 
     handleSubmit(event) {
         console.log('A name was submitted: ' + this.state.value);
-        LinkDataService.saveLink(this.state.value);
+        LinkDataService.saveLink(this.state.value).then((response) => {
+            this.refreshLinks(this.state.activePage);
+        });
+
         this.setState({value: ''});
         event.preventDefault();
     }
@@ -45,7 +49,9 @@ class LinksComponent extends Component {
         const checkedBoxes = [...this.state.checkedBoxes];
         let checkedOptions = checkedBoxes.map(s => s.id);
         console.log('checkedBoxes : ' + checkedOptions);
-        LinkDataService.deleteLinks(checkedOptions);
+        LinkDataService.deleteLinks(checkedOptions).then((response) => {
+            this.refreshLinks(this.state.activePage);
+        });
         e.preventDefault();
     }
 
