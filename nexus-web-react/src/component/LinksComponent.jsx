@@ -5,6 +5,7 @@ import Pagination from "react-js-pagination";
 class LinksComponent extends Component {
 
     constructor(props) {
+
         super(props)
         this.state = {
             links: [],
@@ -22,21 +23,23 @@ class LinksComponent extends Component {
     }
 
     componentDidMount() {
+
         this.refreshLinks(this.state.activePage);
     }
 
     handleChange(pageNumber) {
+
         this.setState({value: event.target.value});
     }
 
     handlePageChange(pageNumber) {
-        console.log('active page is ' + pageNumber);
+
         this.setState({activePage: pageNumber});
         this.refreshLinks(pageNumber);
     }
 
     handleSubmit(event) {
-        console.log('A name was submitted: ' + this.state.value);
+
         LinkDataService.saveLink(this.state.value).then((response) => {
             this.refreshLinks(this.state.activePage);
         });
@@ -46,9 +49,9 @@ class LinksComponent extends Component {
     }
 
     handleDelete = (e, s) => {
+
         const checkedBoxes = [...this.state.checkedBoxes];
         let checkedOptions = checkedBoxes.map(s => s.id);
-        console.log('checkedBoxes : ' + checkedOptions);
         LinkDataService.deleteLinks(checkedOptions).then((response) => {
             this.refreshLinks(this.state.activePage);
         });
@@ -110,8 +113,6 @@ class LinksComponent extends Component {
                 </form>
                 </fieldset>
                 <ul className="container">{this.listItems()}</ul>
-
-
                   <div className="d-flex justify-content-center">
                     <Pagination
                      hideNavigation
@@ -124,7 +125,6 @@ class LinksComponent extends Component {
                      onChange={this.handlePageChange.bind(this)}
                      />
                    </div>
-
             </div>
        );
     }
