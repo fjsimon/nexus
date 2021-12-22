@@ -13,7 +13,7 @@ import java.util.Optional;
 import static org.springframework.security.core.userdetails.User.withUsername;
 
 @Component
-public class ExploreCaliUserDetailsService implements UserDetailsService {
+public class NexusUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 

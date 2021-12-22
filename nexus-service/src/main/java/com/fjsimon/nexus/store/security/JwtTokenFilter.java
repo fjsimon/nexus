@@ -23,9 +23,9 @@ public class JwtTokenFilter extends GenericFilterBean {
     private static final Logger CLASS_LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
     private static final String BEARER = "Bearer";
 
-    private ExploreCaliUserDetailsService userDetailsService;
+    private NexusUserDetailsService userDetailsService;
 
-    public JwtTokenFilter(ExploreCaliUserDetailsService userDetailsService) {
+    public JwtTokenFilter(NexusUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
