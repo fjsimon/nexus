@@ -104,7 +104,8 @@ class LinksComponent extends Component {
                         onChange={this.handleChange} />
 
                     <input type="submit"
-                        value="add" />
+                        value="add"
+                        disabled={!this.state.value.trim().length}/>
 
                     <input type="button"
                         value="delete"
