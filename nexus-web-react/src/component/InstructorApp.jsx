@@ -18,22 +18,11 @@ class InstructorApp extends Component {
                 <Router>
                     <>
                         <MenuComponent />
-
-
-                          <ul>
-                            <li>
-                              <Link to="/">Home</Link>
-                            </li>
-                            <li>
-                              <Link to="/links">Links</Link>
-                            </li>
-                            <li>
-                              <Link to="/books">Books</Link>
-                            </li>
-                          </ul>
-
+                        <AuthenticatedRoute />
                         <Switch>
-                            <Route path="/" exact component={LinksComponent} />
+                            <Route path="/" exact component={LoginComponent} />
+                            <Route path="/login" exact component={LoginComponent} />
+                            <Route path="/logout" exact component={LogoutComponent} />
                             <Route path="/links" exact component={LinksComponent} />
                             <Route path="/books" exact component={BooksComponent} />
                         </Switch>

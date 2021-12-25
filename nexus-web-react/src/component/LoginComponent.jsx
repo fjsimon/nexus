@@ -7,7 +7,7 @@ class LoginComponent extends Component {
         super(props)
 
         this.state = {
-            username: 'username',
+            username: '',
             password: '',
             hasLoginFailed: false,
             showSuccessMessage: false
@@ -63,16 +63,26 @@ class LoginComponent extends Component {
 
     render() {
         return (
-            <div>
+            <div className="login">
                 <h1>Login</h1>
                 <div className="container">
                     {/*<ShowInvalidCredentials hasLoginFailed={this.state.hasLoginFailed}/>*/}
                     {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
                     {this.state.showSuccessMessage && <div>Login Sucessful</div>}
                     {/*<ShowLoginSuccessMessage showSuccessMessage={this.state.showSuccessMessage}/>*/}
-                    User Name: <input type="text" name="username" value={this.state.username} onChange={this.handleChange} />
-                    Password: <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-                    <button className="btn btn-success" onClick={this.loginClicked}>Login</button>
+                    User Name:
+                    <input type="text"
+                           placeholder="Type username ..."
+                           name="username"
+                           value={this.state.username}
+                           onChange={this.handleChange} />
+                    Password:
+                    <input type="password"
+                           placeholder="Type password ..."
+                           name="password"
+                           value={this.state.password}
+                           onChange={this.handleChange} />
+                    <button className="btn" onClick={this.loginClicked}>Login</button>
                 </div>
             </div>
         )
