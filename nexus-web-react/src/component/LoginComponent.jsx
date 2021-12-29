@@ -39,16 +39,6 @@ class LoginComponent extends Component {
         //     this.setState({hasLoginFailed:true})
         // }
 
-//         AuthenticationService
-//             .executeBasicAuthenticationService(this.state.username, this.state.password)
-//             .then(() => {
-//                 AuthenticationService.registerSuccessfulLogin(this.state.username, this.state.password)
-//                 this.props.history.push(`/courses`)
-//             }).catch(() => {
-//                 this.setState({ showSuccessMessage: false })
-//                 this.setState({ hasLoginFailed: true })
-//             })
-
         AuthenticationService
             .executeJwtAuthenticationService(this.state.username, this.state.password)
             .then((response) => {
@@ -67,9 +57,11 @@ class LoginComponent extends Component {
                 <h1 className="login-h1">Login</h1>
                 <div className="container">
                     {/*<ShowInvalidCredentials hasLoginFailed={this.state.hasLoginFailed}/>*/}
-                    {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
-                    {this.state.showSuccessMessage && <div>Login Sucessful</div>}
                     {/*<ShowLoginSuccessMessage showSuccessMessage={this.state.showSuccessMessage}/>*/}
+
+                    {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
+
+                    {this.state.showSuccessMessage && <div>Login Sucessful</div>}
 
                     <input type="text"
                            className="text-input"
