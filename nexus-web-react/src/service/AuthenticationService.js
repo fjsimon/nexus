@@ -1,25 +1,22 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8080'
-
 export const USER_NAME_SESSION_ATTRIBUTE_NAME = 'authenticatedUser'
 
 class AuthenticationService {
 
     executeBasicAuthenticationService(username, password) {
-        return axios.get(`${API_URL}/basicauth`,
+        return axios.get(`${process.env.API_URL}/basicauth`,
             { headers: { authorization: this.createBasicAuthToken(username, password) } })
     }
 
     executeJwtAuthenticationService(username, password) {
-        console.log(username);
 
         const payload = {
             username: username,
             password: password
         };
 
-        return axios.post(`${API_URL}/users/signin`, payload);
+        return axios.post(`${process.env.API_URL}/users/signin`, payload);
     }
 
     createBasicAuthToken(username, password) {

@@ -10,7 +10,7 @@ class LoginComponent extends Component {
             username: '',
             password: '',
             hasLoginFailed: false,
-            showSuccessMessage: false
+            responseStatusCode: ''
         }
 
         this.handleChange = this.handleChange.bind(this)
@@ -27,26 +27,14 @@ class LoginComponent extends Component {
     }
 
     loginClicked() {
-        //in28minutes,dummy
-        // if(this.state.username==='in28minutes' && this.state.password==='dummy'){
-        //     AuthenticationService.registerSuccessfulLogin(this.state.username,this.state.password)
-        //     this.props.history.push(`/courses`)
-        //     //this.setState({showSuccessMessage:true})
-        //     //this.setState({hasLoginFailed:false})
-        // }
-        // else {
-        //     this.setState({showSuccessMessage:false})
-        //     this.setState({hasLoginFailed:true})
-        // }
 
         AuthenticationService
             .executeJwtAuthenticationService(this.state.username, this.state.password)
             .then((response) => {
                 AuthenticationService.registerSuccessfulLoginForJwt(this.state.username, response.data)
                 this.props.history.push(`/links`)
-            }).catch(() => {
-                this.setState({ showSuccessMessage: false })
-                this.setState({ hasLoginFailed: true })
+            }).catch((error) => {
+                this.setState({ hasLoginFailed: true, responseStatusCode: error.response.status })
             })
 
     }
@@ -56,12 +44,8 @@ class LoginComponent extends Component {
             <div className="login">
                 <h1 className="login-h1">Login</h1>
                 <div className="container">
-                    {/*<ShowInvalidCredentials hasLoginFailed={this.state.hasLoginFailed}/>*/}
-                    {/*<ShowLoginSuccessMessage showSuccessMessage={this.state.showSuccessMessage}/>*/}
 
-                    {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
-
-                    {this.state.showSuccessMessage && <div>Login Sucessful</div>}
+                    {this.state.hasLoginFailed && <div className="alert alert-warning">Error Response Code {this.state.responseStatusCode} </div>}
 
                     <input type="text"
                            className="text-input"

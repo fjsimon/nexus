@@ -1,11 +1,9 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8080'
-
 class BookDataService {
 
     retrieveBooks() {
-        return axios.get(`${API_URL}/books`);
+        return axios.get(`${process.env.API_URL}/books`);
     }
 }
 

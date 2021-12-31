@@ -4,8 +4,8 @@
   "description": "React v16 framework built with Babel 7 and Webpack v4.",
   "main": "webpack.config.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --mode development --progress --colors --hot --open"
+    "build": "webpack --env.ENVIRONMENT=production --mode production",
+    "start": "webpack-dev-server --env.ENVIRONMENT=development --mode development --progress --colors --hot --open"
   },
   "author": "",
   "license": "ISC",
@@ -32,6 +32,7 @@
     "compression-webpack-plugin": "^3.0.0",
     "css-loader": "^3.6.0",
     "cssnano": "^4.1.10",
+    "dotenv": "^10.0.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^6.12.0",
