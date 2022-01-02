@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack --env.ENVIRONMENT=production --mode production",
-    "start": "webpack-dev-server --env.ENVIRONMENT=development --mode development --progress --colors --hot --open"
+    "start": "webpack-dev-server --env.ENVIRONMENT=development --mode development --progress --colors --hot"
   },
   "author": "",
   "license": "ISC",
