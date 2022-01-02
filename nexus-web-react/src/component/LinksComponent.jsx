@@ -95,7 +95,7 @@ class LinksComponent extends Component {
 
     render() {
         return (
-            <div className="App">
+            <div className="app">
                 <fieldset>
                 <form onSubmit={this.handleSubmit}>
                     <input type="text"
