@@ -1,5 +1,6 @@
-package com.fjsimon.nexus.store.delegate;
+package com.fjsimon.nexus.store.mockmvc.delegate;
 
+import com.fjsimon.nexus.store.delegate.JSoupDelegate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

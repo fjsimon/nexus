@@ -1,4 +1,4 @@
-package com.fjsimon.nexus.store.controller;
+package com.fjsimon.nexus.store.mockmvc.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

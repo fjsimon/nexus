@@ -1,4 +1,4 @@
-package com.fjsimon.nexus.store.controller;
+package com.fjsimon.nexus.store.mockmvc.controller;
 
 import com.fjsimon.nexus.store.domain.Role;
 import com.fjsimon.nexus.store.security.JwtProvider;

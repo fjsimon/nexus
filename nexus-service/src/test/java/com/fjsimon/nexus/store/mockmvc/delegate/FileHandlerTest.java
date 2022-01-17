@@ -1,5 +1,6 @@
-package com.fjsimon.nexus.store.delegate;
+package com.fjsimon.nexus.store.mockmvc.delegate;
 
+import com.fjsimon.nexus.store.delegate.FileHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 
@@ -27,10 +27,10 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void get_path_test() throws IOException {
+    public void get_path_test() {
 
-        Path path = testee.getPath(String.format("%s_%s_%s.txt", LocalDate.now().toString(), "platform", "category"));
-        assertThat(path.toString(), is(new StringBuilder().append("/path/").append(LocalDate.now().toString()).append("_platform_category.txt").toString()));
+        Path path = testee.getPath(String.format("%s_%s_%s.txt", LocalDate.now(), "platform", "category"));
+        assertThat(path.toString(), is(new StringBuilder().append("/path/").append(LocalDate.now()).append("_platform_category.txt").toString()));
     }
 
 //    @Test(expected = NoSuchFileException.class)
