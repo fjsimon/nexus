@@ -13,6 +13,7 @@
         <module>nexus-client</module>
         <module>nexus-web-react</module>
         <module>nexus-service</module>
+        <module>nexus-service-bdd</module>
     </modules>
 
     <distributionManagement>
