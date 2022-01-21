@@ -31,9 +31,9 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/books")
-public class ScannerController {
+public class LibraryController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScannerController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LibraryController.class);
 
     @Value("${app.files.path}")
     private String path;
@@ -41,7 +41,7 @@ public class ScannerController {
     @Autowired
     private OpenLibraryClient openLibraryClient;
 
-    @GetMapping()
+    @GetMapping(value = "/scan", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FileResponse> scan(@RequestParam(value="name", defaultValue="World") String name) {
 
         LOGGER.info(String.format("GET /books path : %s", path));
@@ -66,13 +66,13 @@ public class ScannerController {
 
 
     @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map getInfo(@NotNull @RequestParam(value="isbn") String isbn) throws IOException {
+    public Map<String, Book> getInfo(@NotNull @RequestParam(value="isbn") String isbn) {
 
         LOGGER.info(String.format("GET /books/info isbn : %s", isbn));
 
         Optional<Map<String, Book>> optional = openLibraryClient.retrieveBook(isbn, "data", "json");
 
-        return optional.isPresent() ? optional.get() : Collections.emptyMap();
+        return optional.orElse(Collections.emptyMap());
     }
 
 
