@@ -111,6 +111,8 @@
                     <includes>
                         <include>CucumberTest.java</include>
                     </includes>
+                    <parallel>methods</parallel>
+                    <threadCount>4</threadCount>
                 </configuration>
                 <executions>
                     <execution>
