@@ -2,6 +2,7 @@ package com.fjsimon.nexus.store.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +32,8 @@ public class ExceptionHandlerController {
         return new DefaultErrorAttributes() {
 
             @Override
-            public Map<String, Object> getErrorAttributes(WebRequest requestAttributes, boolean includeStackTrace) {
-                Map<String, Object> errorAttributes = super.getErrorAttributes(requestAttributes, includeStackTrace);
+            public Map<String, Object> getErrorAttributes(WebRequest requestAttributes, ErrorAttributeOptions errorAttributeOptions) {
+                Map<String, Object> errorAttributes = super.getErrorAttributes(requestAttributes, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.STACK_TRACE));
                 errorAttributes.remove("exception");
                 return errorAttributes;
             }
