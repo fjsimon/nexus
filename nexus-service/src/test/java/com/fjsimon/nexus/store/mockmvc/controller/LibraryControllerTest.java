@@ -41,10 +41,9 @@ class LibraryControllerTest {
 
         this.mockMvc.perform(get("/books/scan")).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(676)))
                 .andExpect(jsonPath("$[0].*", hasSize(2)))
-                .andExpect(jsonPath("$[0].name", is("appendix.pdf")))
-                .andExpect(jsonPath("$[0].path", containsString("Applied Cryptography/appendix.pdf")));
+                .andExpect(jsonPath("$[0].name", containsString(".pdf")))
+                .andExpect(jsonPath("$[0].path", containsString(".pdf")));
 
     }
 }
