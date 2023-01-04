@@ -2,6 +2,7 @@ package com.fjsimon.nexus.store.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
@@ -16,8 +17,6 @@ import java.util.Optional;
 
 /**
  * Filter for Java Web Token Authentication and Authorization
- *
- * Created by Mary Ellen Bowman
  */
 public class JwtTokenFilter extends GenericFilterBean {
     private static final Logger CLASS_LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
@@ -44,7 +43,8 @@ public class JwtTokenFilter extends GenericFilterBean {
             throws IOException, ServletException {
         CLASS_LOGGER.info("Process request to check for a JSON Web Token ");
         //Check for Authorization:Bearer JWT
-        String headerValue = ((HttpServletRequest)req).getHeader("Authorization");
+        String headerValue = ((HttpServletRequest)req).getHeader(HttpHeaders.AUTHORIZATION);
+
         getBearerToken(headerValue).ifPresent(token-> {
             //Pull the Username and Roles from the JWT to construct the user details
             userDetailsService.loadUserByJwtToken(token).ifPresent(userDetails -> {
