@@ -2,7 +2,10 @@
 .idea/
 target/
 logs/
+.settings/
 
 *.p12
 *.db
 **/environment.properties
+*.classpath
+*.project
