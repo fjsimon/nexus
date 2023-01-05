@@ -5,20 +5,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
 /**
  * Filter for Java Web Token Authentication and Authorization
  */
-public class JwtTokenFilter extends GenericFilterBean {
+public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Logger CLASS_LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
     private static final String BEARER = "Bearer";
 
@@ -32,18 +31,20 @@ public class JwtTokenFilter extends GenericFilterBean {
      * Determine if there is a JWT as part of the HTTP Request Header.
      * If it is valid then set the current context With the Authentication(user and roles) found in the token
      *
-     * @param req Servlet Request
-     * @param res Servlet Response
+     * @param request Http Servlet Request
+     * @param response Http Servlet Response
      * @param filterChain Filter Chain
      * @throws IOException
      * @throws ServletException
      */
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
         CLASS_LOGGER.info("Process request to check for a JSON Web Token ");
+
         //Check for Authorization:Bearer JWT
-        String headerValue = ((HttpServletRequest)req).getHeader(HttpHeaders.AUTHORIZATION);
+        String headerValue = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         getBearerToken(headerValue).ifPresent(token-> {
             //Pull the Username and Roles from the JWT to construct the user details
@@ -55,7 +56,8 @@ public class JwtTokenFilter extends GenericFilterBean {
         });
 
         //move on to the next filter in the chains
-        filterChain.doFilter(req, res);
+        filterChain.doFilter(request, response);
+
     }
 
     /**
