@@ -14,10 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.security.SecureRandom;
+
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private static final int STRENGTH = 12;
 
     @Autowired
     private NexusUserDetailsService userDetailsService;
@@ -63,7 +67,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
 
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder(STRENGTH, new SecureRandom());
     }
 
 }
