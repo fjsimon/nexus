@@ -9,7 +9,7 @@ class BooksComponent extends Component {
             books: [],
             checkedBoxes: [],
             value: '',
-            selectedItem: 'http://localhost:8080/books/pdf?path=/run/media/r00t/touro/books/3dprintingprojects_toysbotstoolsandvehicles.pdf'
+            selectedItem: 'http://localhost:8080/books/resource?path=/home/r00t/books/DevOps/dockerupandrunning.pdf'
         }
 
         this.refreshBooks = this.refreshBooks.bind(this);
@@ -36,7 +36,7 @@ class BooksComponent extends Component {
         if(e.target.checked) {
           checkedBoxes.push(s);
 
-          this.state.selectedItem = 'http://localhost:8080/books/pdf?path=' + s.path;
+          this.state.selectedItem = 'http://localhost:8080/books/resource?path=' + s.path;
 
         } else {
           const index = checkedBoxes.findIndex((ch) => ch.name === s.name);
@@ -54,7 +54,10 @@ class BooksComponent extends Component {
                        checked = {this.state.checkedBoxes.find((ch) => ch.name === item.name)}
                        onChange = {(e) => this.handleCheckbox(e, item)}
                 />
-                <a data-path={item.path}>{item.name}</a>
+                <a data-path={item.path}
+                    href={"http://localhost:8080/books/resource?path=" + item.path}
+                    target="_blank">{item.name}
+                </a>
         </li>
     ));
 
@@ -63,7 +66,7 @@ class BooksComponent extends Component {
         return (
             <div className="App">
 
-{/*                 <object width="500" height="600" type="application/pdf" data={this.state.selectedItem}> */}
+{/*                 <object type="application/pdf" data={this.state.selectedItem}> */}
 {/*                   <p>Insert your error message here, if the PDF cannot be displayed.</p> */}
 {/*                 </object> */}
 
