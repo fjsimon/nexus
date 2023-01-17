@@ -29,13 +29,21 @@ div.login {
     }
 
     .submit {
-        background-color: royalblue;
-        border: none;
-        font-weight: 100;
-        font-size: 1em;
-        color: white;
-        padding: 10px 30px;
+        background: #fff;
+        font-size: 14px;
+        margin-top: 30px;
+        padding: 16px 20px;
+        border-radius: 26px;
+        border: 1px solid #007FFF;
+        text-transform: uppercase;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        color: #A8A8A8;
+        box-shadow: 0px 2px 2px #007FFF;
         cursor: pointer;
+        transition: .2s;
     }
 
     input, textarea, button, button:focus {

@@ -42,7 +42,7 @@ class LoginComponent extends Component {
     render() {
         return (
             <div className="login">
-                <h1 className="login-h1">Login</h1>
+{/*                 <h1 className="login-h1">Login</h1> */}
                 <div className="container">
 
                     {this.state.hasLoginFailed && <div className="alert alert-warning">Error Response Code {this.state.responseStatusCode} </div>}
