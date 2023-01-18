@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import BookDataService from '../service/BookDataService.js';
+import DataTable from 'react-data-table-component';
 
 class BooksComponent extends Component {
 
@@ -63,14 +64,39 @@ class BooksComponent extends Component {
 
     render() {
 
+        const columns = [
+            {
+                name: 'Item Name',
+                selector: row => row.name,
+            },
+            {
+                cell: row => <a data-path={row.path}
+                    href={"http://localhost:8080/books/resource?path=" + row.path}
+                    target="_blank">{row.name}</a>,
+                ignoreRowClick: true,
+                allowOverflow: true,
+                button: false,
+            }
+        ];
+
         return (
-            <div className="App">
+            <div className="books">
 
 {/*                 <object type="application/pdf" data={this.state.selectedItem}> */}
 {/*                   <p>Insert your error message here, if the PDF cannot be displayed.</p> */}
 {/*                 </object> */}
 
-                <ul className="container">{this.listItems()}</ul>
+{/*                 <ul className="container">{this.listItems()}</ul> */}
+
+                <DataTable
+                    title="Books"
+                    columns={columns}
+                    data={this.state.books}
+                    pagination
+                    selectableRows
+                    selectableRowsSingle
+                />
+
             </div>
        );
     }
