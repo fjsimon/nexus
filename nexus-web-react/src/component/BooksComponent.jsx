@@ -30,37 +30,36 @@ class BooksComponent extends Component {
     }
 
 
-    handleCheckbox = (e, s) => {
+    handleCheckbox = (selected_item) => {
 
-        const checkedBoxes = [...this.state.checkedBoxes];
+        console.log(selected_item);
 
-        if(e.target.checked) {
-          checkedBoxes.push(s);
-
-          this.state.selectedItem = 'http://localhost:8080/books/resource?path=' + s.path;
-
-        } else {
-          const index = checkedBoxes.findIndex((ch) => ch.name === s.name);
-          checkedBoxes.splice(index, 1);
-        }
-        this.setState({checkedBoxes});
+//         const checkedBoxes = [...this.state.checkedBoxes];
+//         if(e.target.checked) {
+//           checkedBoxes.push(s);
+//           this.state.selectedItem = 'http://localhost:8080/books/resource?path=' + s.path;
+//         } else {
+//           const index = checkedBoxes.findIndex((ch) => ch.name === s.name);
+//           checkedBoxes.splice(index, 1);
+//         }
+//         this.setState({checkedBoxes});
     }
 
 
-    listItems = () => this.state.books.map(item => (
-
-        <li key={item.name + Math.random().toString(10)}>
-                <input type="checkbox"
-                       value={item.path}
-                       checked = {this.state.checkedBoxes.find((ch) => ch.name === item.name)}
-                       onChange = {(e) => this.handleCheckbox(e, item)}
-                />
-                <a data-path={item.path}
-                    href={"http://localhost:8080/books/resource?path=" + item.path}
-                    target="_blank">{item.name}
-                </a>
-        </li>
-    ));
+//     listItems = () => this.state.books.map(item => (
+//
+//         <li key={item.name + Math.random().toString(10)}>
+//                 <input type="checkbox"
+//                        value={item.path}
+//                        checked = {this.state.checkedBoxes.find((ch) => ch.name === item.name)}
+//                        onChange = {(e) => this.handleCheckbox(e, item)}
+//                 />
+//                 <a data-path={item.path}
+//                     href={"http://localhost:8080/books/resource?path=" + item.path}
+//                     target="_blank">{item.name}
+//                 </a>
+//         </li>
+//     ));
 
     render() {
 
@@ -96,6 +95,7 @@ class BooksComponent extends Component {
                     pagination
                     selectableRows
                     selectableRowsSingle
+                    onSelectedRowsChange={this.handleCheckbox}
                 />
 
             </div>
