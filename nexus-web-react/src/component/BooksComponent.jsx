@@ -70,6 +70,7 @@ class BooksComponent extends Component {
                 selector: row => row.name,
             },
             {
+                name: 'Local link',
                 cell: row => <a data-path={row.path}
                     href={"http://localhost:8080/books/resource?path=" + row.path}
                     target="_blank">{row.name}</a>,
