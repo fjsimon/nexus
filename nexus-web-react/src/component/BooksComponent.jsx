@@ -10,7 +10,8 @@ class BooksComponent extends Component {
             books: [],
             checkedBoxes: [],
             value: '',
-            selectedItem: 'http://localhost:8080/books/resource?path=/home/r00t/books/DevOps/dockerupandrunning.pdf'
+            selectedItem: 'http://localhost:8080/books/resource?path=/home/r00t/books/DevOps/dockerupandrunning.pdf',
+            isVisible: false
         }
 
         this.refreshBooks = this.refreshBooks.bind(this);
@@ -34,32 +35,12 @@ class BooksComponent extends Component {
 
         console.log(selected_item);
 
-//         const checkedBoxes = [...this.state.checkedBoxes];
-//         if(e.target.checked) {
-//           checkedBoxes.push(s);
-//           this.state.selectedItem = 'http://localhost:8080/books/resource?path=' + s.path;
-//         } else {
-//           const index = checkedBoxes.findIndex((ch) => ch.name === s.name);
-//           checkedBoxes.splice(index, 1);
-//         }
-//         this.setState({checkedBoxes});
+        if ( selected_item.selectedCount ) {
+            this.setState({isVisible: true});
+        } else {
+            this.setState({isVisible: false});
+        }
     }
-
-
-//     listItems = () => this.state.books.map(item => (
-//
-//         <li key={item.name + Math.random().toString(10)}>
-//                 <input type="checkbox"
-//                        value={item.path}
-//                        checked = {this.state.checkedBoxes.find((ch) => ch.name === item.name)}
-//                        onChange = {(e) => this.handleCheckbox(e, item)}
-//                 />
-//                 <a data-path={item.path}
-//                     href={"http://localhost:8080/books/resource?path=" + item.path}
-//                     target="_blank">{item.name}
-//                 </a>
-//         </li>
-//     ));
 
     render() {
 
@@ -98,6 +79,10 @@ class BooksComponent extends Component {
                     onSelectedRowsChange={this.handleCheckbox}
                 />
 
+                <div className={this.state.isVisible ? undefined : 'hidden'} >
+                    <input type="text" placeholder="type isbn ..." value={this.state.value} />
+                    <input type="button" value="search" />
+                </div>
             </div>
        );
     }
