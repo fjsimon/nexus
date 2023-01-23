@@ -15,6 +15,8 @@ class BooksComponent extends Component {
         }
 
         this.refreshBooks = this.refreshBooks.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -30,7 +32,6 @@ class BooksComponent extends Component {
             )
     }
 
-
     handleCheckbox = (selected_item) => {
 
         console.log(selected_item);
@@ -40,6 +41,17 @@ class BooksComponent extends Component {
         } else {
             this.setState({isVisible: false});
         }
+    }
+
+    handleChange(event) {
+
+        console.log(event);
+        this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+
+        console.log(event);
     }
 
     render() {
@@ -79,10 +91,19 @@ class BooksComponent extends Component {
                     onSelectedRowsChange={this.handleCheckbox}
                 />
 
-                <div className={this.state.isVisible ? undefined : 'hidden'} >
-                    <input type="text" placeholder="type isbn ..." value={this.state.value} />
-                    <input type="button" value="search" />
-                </div>
+                <fieldset className={this.state.isVisible ? undefined : 'hidden'}>
+                    <form onSubmit={this.handleSubmit}>
+                        <input type="text"
+                            placeholder="Copy ISBN ..."
+                            value={this.state.value}
+                            onChange={this.handleChange} />
+
+                        <input type="submit"
+                            value="search"
+                            disabled={!this.state.value.trim().length}/>
+                    </form>
+                </fieldset>
+
             </div>
        );
     }
