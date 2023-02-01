@@ -10,6 +10,11 @@ class BookDataService {
 
         return axios.get(`${process.env.API_URL}/books/resource?path=` + path);
     }
+
+    getBookInfo(isbn) {
+
+        return axios.get(`${process.env.API_URL}/books/info?isbn=` + isbn);
+    }
 }
 
 export default new BookDataService()

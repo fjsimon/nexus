@@ -9,7 +9,8 @@ class BooksComponent extends Component {
         this.state = {
             books: [],
             checkedBoxes: [],
-            value: '',
+            isbn: '',
+            description: 'description',
             selectedItem: 'http://localhost:8080/books/resource?path=/home/r00t/books/DevOps/dockerupandrunning.pdf',
             isVisible: false
         }
@@ -46,12 +47,18 @@ class BooksComponent extends Component {
     handleChange(event) {
 
         console.log(event);
-        this.setState({value: event.target.value});
+        this.setState({isbn: event.target.value});
     }
 
     handleSubmit(event) {
 
         console.log(event);
+
+        BookDataService.getBookInfo(this.state.isbn.trim()).then((response) => {
+            this.setState({description: JSON.stringify(response.data)});
+        });
+
+        event.preventDefault();
     }
 
     render() {
@@ -95,14 +102,16 @@ class BooksComponent extends Component {
                     <form onSubmit={this.handleSubmit}>
                         <input type="text"
                             placeholder="Copy ISBN ..."
-                            value={this.state.value}
+                            value={this.state.isbn}
                             onChange={this.handleChange} />
 
                         <input type="submit"
                             value="search"
-                            disabled={!this.state.value.trim().length}/>
+                            disabled={!this.state.isbn.trim().length}/>
                     </form>
                 </fieldset>
+
+                {this.state.description}
 
             </div>
        );
