@@ -79,6 +79,7 @@
     "react-lazyload": "3.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.8",
+    "react-spinners": "^0.13.8",
     "styled-components": "^5.3.6"
   }
 }

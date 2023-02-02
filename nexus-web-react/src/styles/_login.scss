@@ -10,6 +10,15 @@ div.login {
     -webkit-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
 
+    .hidden {
+        visibility: hidden;
+    }
+
+    .loader {
+        display: block;
+        margin: 0 auto;
+    }
+
     .login-h1 {
         font-weight: 100;
         font-size: 1.8em;
