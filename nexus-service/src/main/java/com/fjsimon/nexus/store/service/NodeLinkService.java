@@ -42,4 +42,9 @@ public class NodeLinkService {
 
         nodeLinkRepository.deleteByIdIn(ids);
     }
+
+    public List<NodeLink> getLinks() {
+
+        return nodeLinkRepository.findAll();
+    }
 }

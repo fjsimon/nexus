@@ -76,4 +76,17 @@ public class NodeLinkControllerTest {
     }
 
 
+    @WithMockUser("spring")
+    @Test
+    public void getLinks() throws Exception {
+
+        when(nodeLinkServiceMock.getLinks()).thenReturn(Arrays.asList(new NodeLink("link")));
+
+        this.mockMvc.perform(get("/links/resource"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+
 }

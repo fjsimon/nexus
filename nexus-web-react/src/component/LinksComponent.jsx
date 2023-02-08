@@ -20,6 +20,7 @@ class LinksComponent extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        this.handleDownload = this.handleDownload.bind(this);
     }
 
     componentDidMount() {
@@ -56,6 +57,33 @@ class LinksComponent extends Component {
             this.refreshLinks(this.state.activePage);
         });
         e.preventDefault();
+    }
+
+    handleDownload = (e, s) => {
+
+        LinkDataService.downloadLinks().then((response) => {
+
+            console.log(response);
+
+            // create file in browser
+            const json = JSON.stringify(response.data, null, 2);
+            const blob = new Blob([json], { type: "application/json" });
+            const href = URL.createObjectURL(blob);
+
+            // create "a" HTLM element with href to file
+            const link = document.createElement("a");
+            link.href = href;
+            link.download = "links.json";
+            document.body.appendChild(link);
+            link.click();
+
+            // clean up "a" element & remove ObjectURL
+            document.body.removeChild(link);
+            URL.revokeObjectURL(href);
+
+        });
+
+         e.preventDefault();
     }
 
     handleCheckbox = (e, s) => {
@@ -106,6 +134,10 @@ class LinksComponent extends Component {
                     <input type="submit"
                         value="add"
                         disabled={!this.state.value.trim().length}/>
+
+                    <input type="button"
+                        value="download"
+                        onClick={this.handleDownload}/>
 
                     <input type="button"
                         value="delete"

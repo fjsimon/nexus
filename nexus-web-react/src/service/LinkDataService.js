@@ -23,6 +23,11 @@ class LinkDataService {
 
         return axios.delete(`${process.env.API_URL}/links?nodeLinkIds=${linkIds}`);
     }
+
+    downloadLinks() {
+
+        return axios.get(`${process.env.API_URL}/links/resource`);
+    }
 }
 
 export default new LinkDataService()
