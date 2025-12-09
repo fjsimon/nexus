@@ -1,8 +1,7 @@
 package com.fjsimon.nexus.store.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter
