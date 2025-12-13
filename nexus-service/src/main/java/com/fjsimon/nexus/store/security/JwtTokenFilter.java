@@ -5,18 +5,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
 import java.io.IOException;
 import java.util.Optional;
 
 /**
  * Filter for Java Web Token Authentication and Authorization
  */
+@Component
 public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Logger CLASS_LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
     private static final String BEARER = "Bearer";

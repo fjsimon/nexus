@@ -1,0 +1,7 @@
+<jboss-web>
+    <!-- Deploy WAR at root context (/) -->
+    <context-root>/</context-root>
+
+    <!-- Optional: Use specific modules if needed -->
+    <!-- <module>deployment.module.name</module> -->
+</jboss-web>

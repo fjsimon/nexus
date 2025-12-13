@@ -3,9 +3,9 @@ package com.fjsimon.nexus.store.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fjsimon.nexus.store.domain.NodeLink;
 import com.fjsimon.nexus.store.exceptions.NotFoundException;
-import com.fjsimon.nexus.store.model.FileResponse;
 import com.fjsimon.nexus.store.model.LinkDto;
 import com.fjsimon.nexus.store.service.NodeLinkService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @RestController

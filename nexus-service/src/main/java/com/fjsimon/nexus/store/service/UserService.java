@@ -6,9 +6,9 @@ import com.fjsimon.nexus.store.exceptions.NotFoundException;
 import com.fjsimon.nexus.store.repo.RoleRepository;
 import com.fjsimon.nexus.store.repo.UserRepository;
 import com.fjsimon.nexus.store.security.JwtProvider;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -19,28 +19,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-    private UserRepository userRepository;
-
-    private AuthenticationManager authenticationManager;
-
-    private RoleRepository roleRepository;
-
-    private PasswordEncoder passwordEncoder;
-
-    private JwtProvider jwtProvider;
-
-    @Autowired
-    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,
-                       RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
-        this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtProvider = jwtProvider;
-    }
+    private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
     /**
      * Sign in a user into the application, with JWT-enabled authentication

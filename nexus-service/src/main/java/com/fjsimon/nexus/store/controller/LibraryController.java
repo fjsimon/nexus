@@ -5,6 +5,7 @@ import com.fjsimon.nexus.store.exceptions.NotFoundException;
 import com.fjsimon.nexus.store.model.Book;
 import com.fjsimon.nexus.store.model.FileResponse;
 
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

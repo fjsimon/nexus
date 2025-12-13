@@ -1,17 +1,21 @@
 package com.fjsimon.nexus.store.mockmvc.controller;
 
+import com.fjsimon.nexus.store.controller.NodeLinkController;
 import com.fjsimon.nexus.store.domain.NodeLink;
 import com.fjsimon.nexus.store.service.NodeLinkService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -28,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class NodeLinkControllerTest {
 
     @Autowired
@@ -40,14 +45,19 @@ public class NodeLinkControllerTest {
     @Test
     public void noParamLinks() throws Exception {
 
-        Page<NodeLink> pages = new PageImpl<>(Collections.emptyList());
+        Page<NodeLink> pages =
+                new PageImpl<>(
+                        Collections.emptyList(),
+                        PageRequest.of(0, 10),
+                        0
+                );
         when(nodeLinkServiceMock.getLinks(any(Pageable.class))).thenReturn(pages);
 
         this.mockMvc.perform(get("/links")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.empty").value("true"))
-                .andExpect(jsonPath("$.pageable").value("INSTANCE"))
-                .andExpect(jsonPath("$.totalPages").value("1"))
+                .andExpect(jsonPath("$.pageable.paged").value(true))
+                .andExpect(jsonPath("$.totalPages").value("0"))
                 .andExpect(jsonPath("$.totalElements").value("0"))
                 .andExpect(jsonPath("$.first").value("true"));
     }
