@@ -1,104 +1,136 @@
-import axios from 'axios'
+import axios from 'axios';
 
-export const USER_NAME_SESSION_ATTRIBUTE_NAME = 'authenticatedUser'
+export const USER_NAME_SESSION_ATTRIBUTE_NAME = 'authenticatedUser';
+
+const api = axios.create({
+  baseURL: process.env.API_URL,
+  withCredentials: true,
+});
 
 let currentAccessToken = null;
+let isRefreshing = false;
+let isLoggedOut = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(p =>
+    error ? p.reject(error) : p.resolve(token)
+  );
+  failedQueue = [];
+};
 
 class AuthenticationService {
 
-    executeBasicAuthenticationService(username, password) {
-        return axios.get(`${process.env.API_URL}/basicauth`,
-            { headers: { authorization: this.createBasicAuthToken(username, password) } })
-    }
+  executeBasicAuthenticationService(username, password) {
+    return api.get(
+      `/basicauth`,
+      { headers: { authorization: this.createBasicAuthToken(username, password) } }
+    );
+  }
 
-    executeJwtAuthenticationService(username, password) {
+  executeJwtAuthenticationService(username, password) {
+    return api.post(`/users/login`, { username, password });
+  }
 
-        const payload = {
-            username: username,
-            password: password
-        };
+  createBasicAuthToken(username, password) {
+    return 'Basic ' + window.btoa(username + ':' + password);
+  }
 
-        return axios.post(`${process.env.API_URL}/users/signin`, payload);
-    }
+  registerSuccessfulLogin(username, password) {
+    sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
+    currentAccessToken = this.createBasicAuthToken(username, password);
+  }
 
-    createBasicAuthToken(username, password) {
-        return 'Basic ' + window.btoa(username + ":" + password)
-    }
+  registerSuccessfulLoginForJwt(username, token) {
+    sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
+    currentAccessToken = this.createJWTToken(token);
+  }
 
-    registerSuccessfulLogin(username, password) {
-        //let basicAuthHeader = 'Basic ' +  window.btoa(username + ":" + password)
-        //console.log('registerSuccessfulLogin')
-        sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
-        currentAccessToken = this.createBasicAuthToken(username, password);
-    }
+  createJWTToken(token) {
+    return 'Bearer ' + token;
+  }
 
-    registerSuccessfulLoginForJwt(username, token) {
-        sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
-        currentAccessToken = this.createJWTToken(token);
-    }
+  logout() {
+    isLoggedOut = true;
+    sessionStorage.removeItem(USER_NAME_SESSION_ATTRIBUTE_NAME);
+    currentAccessToken = null;
+    delete api.defaults.headers.common.authorization;
+    processQueue(new Error("User logged out"));
+    api.post("/users/logout").catch(() => {});
+  }
 
-    createJWTToken(token) {
-        return 'Bearer ' + token
-    }
+  isUserLoggedIn() {
+    return sessionStorage.getItem(USER_NAME_SESSION_ATTRIBUTE_NAME) !== null;
+  }
 
-    logout() {
-        sessionStorage.removeItem(USER_NAME_SESSION_ATTRIBUTE_NAME);
-        currentAccessToken = null;
-    }
+  setupAxiosInterceptors() {
+    /* ---------- Request interceptor ---------- */
+    api.interceptors.request.use(config => {
 
-    isUserLoggedIn() {
-        return sessionStorage.getItem(USER_NAME_SESSION_ATTRIBUTE_NAME) !== null;
-    }
+      console.log("API request:", config.url);
 
-    getLoggedInUserName() {
-        let user = sessionStorage.getItem(USER_NAME_SESSION_ATTRIBUTE_NAME)
-        if (user === null) return ''
-        return user
-    }
+      if (this.isUserLoggedIn() && currentAccessToken) {
+        config.headers.authorization = currentAccessToken;
+      }
+      return config;
+    });
 
-    setupAxiosInterceptors() {
-        // Request interceptor
-        axios.interceptors.request.use(
-            (config) => {
-                if (this.isUserLoggedIn() && currentAccessToken) {
-                    config.headers.authorization = currentAccessToken;
-                }
-                return config;
-            }
-        );
+    /* ---------- Response interceptor ---------- */
+    api.interceptors.response.use(
+      response => response,
+      async error => {
+        const originalRequest = error.config;
 
-        // Response interceptor (auto-refresh if expired)
-        axios.interceptors.response.use(
-            response => response,
-            async error => {
-                const originalRequest = error.config;
+        if (!originalRequest) {
+          return Promise.reject(error);
+        }
 
-                if (error.response && error.response.status === 401 && !originalRequest._retry) {
-                    originalRequest._retry = true;
+        if (originalRequest.url === '/users/refresh') {
+          return Promise.reject(error);
+        }
 
-                    try {
-                        const res = await axios.get(`${process.env.API_URL}/users/refresh`, {
-                            withCredentials: true
-                        });
+        if (error.response?.status === 403 && !originalRequest._retry) {
+          originalRequest._retry = true;
 
-                        const newToken = res.data.accessToken;
+          if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+              failedQueue.push({ resolve, reject });
+            }).then(token => {
+              originalRequest.headers.authorization = token;
+              return api(originalRequest);
+            });
+          }
 
-                        currentAccessToken = this.createJWTToken(newToken);
+          isRefreshing = true;
 
-                        originalRequest.headers.authorization = currentAccessToken;
+          try {
+            const res = await api.post('/users/refresh');
 
-                        return axios(originalRequest);
+            const newToken = this.createJWTToken(res.data);
+            currentAccessToken = newToken;
 
-                    } catch (refreshError) {
-                        this.logout();
-                        window.location = "/login";
-                    }
-                }
+            api.defaults.headers.common.authorization = newToken;
+            processQueue(null, newToken);
 
-                return Promise.reject(error);
-            }
-        );
-    }
+            originalRequest.headers.authorization = newToken;
+            return api(originalRequest);
+
+          } catch (refreshError) {
+            processQueue(refreshError);
+            this.logout();
+            window.location.href = '/login';
+            return Promise.reject(refreshError);
+
+          } finally {
+            isRefreshing = false;
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+  }
 }
 
-export default new AuthenticationService()
+export default new AuthenticationService();
+export { api };

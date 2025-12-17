@@ -1,5 +1,4 @@
-import axios from 'axios'
-
+import { api } from "./AuthenticationService";
 
 class LinkDataService {
 
@@ -11,22 +10,22 @@ class LinkDataService {
             'link': link
         };
 
-        return axios.post(`${process.env.API_URL}/links`, payload);
+        return api.post(`/links`, payload);
     }
 
     retrieveLinks(page) {
 
-        return axios.get(`${process.env.API_URL}/links?page=${page}&size=10`);
+        return api.get(`/links?page=${page}&size=10`);
     }
 
     deleteLinks(linkIds) {
 
-        return axios.delete(`${process.env.API_URL}/links?nodeLinkIds=${linkIds}`);
+        return api.delete(`/links?nodeLinkIds=${linkIds}`);
     }
 
     downloadLinks() {
 
-        return axios.get(`${process.env.API_URL}/links/resource`);
+        return api.get(`/links/resource`);
     }
 }
 

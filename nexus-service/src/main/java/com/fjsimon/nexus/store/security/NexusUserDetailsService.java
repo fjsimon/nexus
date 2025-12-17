@@ -2,23 +2,25 @@ package com.fjsimon.nexus.store.security;
 
 import com.fjsimon.nexus.store.domain.User;
 import com.fjsimon.nexus.store.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fjsimon.nexus.store.service.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.security.core.userdetails.User.withUsername;
 
 @Component
+@RequiredArgsConstructor
 public class NexusUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    JwtProvider jwtProvider;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -38,33 +40,39 @@ public class NexusUserDetailsService implements UserDetailsService {
     /**
      * Extract username and roles from a validated jwt string.
      *
-     * @param jwtToken jwt string
+     * @param token String
      * @return UserDetails if valid, Empty otherwise
      */
-    public Optional<UserDetails> loadUserByJwtToken(String jwtToken) {
-        if (jwtProvider.isValidToken(jwtToken)) {
-            return Optional.of(
-                withUsername(jwtProvider.getUsername(jwtToken))
-                .authorities(jwtProvider.getRoles(jwtToken))
-                .password("") //token does not have password but field may not be empty
+    public Optional<UserDetails> loadUserByJwtToken(String token) {
+
+        if (!jwtService.isAccessTokenValid(token)) {
+            return Optional.empty();
+        }
+
+        String username = jwtService.getUsernameFromAccess(token);
+        List<GrantedAuthority> authorities = jwtService.getRoles(token);
+
+        UserDetails userDetails = withUsername(username)
+                .password("{noop}jwt")
+                .authorities(authorities)
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
                 .disabled(false)
-                .build());
-        }
-        return Optional.empty();
+                .build();
+
+        return Optional.of(userDetails);
     }
 
     /**
      * Extract the username from the JWT then lookup the user in the database.
      *
-     * @param jwtToken
+     * @param accessToken String
      * @return
      */
-    public Optional<UserDetails> loadUserByJwtTokenAndDatabase(String jwtToken) {
-        if (jwtProvider.isValidToken(jwtToken)) {
-            return Optional.of(loadUserByUsername(jwtProvider.getUsername(jwtToken)));
+    public Optional<UserDetails> loadUserByJwtTokenAndDatabase(String accessToken) {
+        if (jwtService.isAccessTokenValid(accessToken)) {
+            return Optional.of(loadUserByUsername(jwtService.getUsernameFromAccess(accessToken)));
         } else {
             return Optional.empty();
         }

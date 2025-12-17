@@ -1,19 +1,19 @@
-import axios from 'axios'
+import { api } from "./AuthenticationService";
 
 class BookDataService {
 
     retrieveBooks() {
-        return axios.get(`${process.env.API_URL}/books/scan`);
+        return api.get(`/books/scan`);
     }
 
     retrieveBook(path) {
 
-        return axios.get(`${process.env.API_URL}/books/resource?path=` + path);
+        return api.get(`/books/resource?path=` + path);
     }
 
     getBookInfo(isbn) {
 
-        return axios.get(`${process.env.API_URL}/books/info?isbn=` + isbn);
+        return api.get(`/books/info?isbn=` + isbn);
     }
 }
 

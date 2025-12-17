@@ -5,13 +5,11 @@ import com.fjsimon.nexus.store.domain.User;
 import com.fjsimon.nexus.store.exceptions.NotFoundException;
 import com.fjsimon.nexus.store.repo.RoleRepository;
 import com.fjsimon.nexus.store.repo.UserRepository;
-import com.fjsimon.nexus.store.security.JwtProvider;
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,31 +23,21 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
 
     /**
-     * Sign in a user into the application, with JWT-enabled authentication
+     * Get a user into the application
      *
      * @param username  username
-     * @param password  password
-     * @return Optional of the Java Web Token, empty otherwise
+     * @return Optional of User , empty otherwise
      */
-    public Optional<String> signin(String username, String password) {
-        LOGGER.info("New user attempting to sign in");
-        Optional<String> token = Optional.empty();
+    public Optional<User> getUser(String username) {
+
+        LOGGER.info(String.format("getUser : %s", username));
+
         Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
-            try {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-                token = Optional.of(jwtProvider.createToken(username, user.get().getRoles()));
-            } catch (AuthenticationException e){
-                LOGGER.info("Log in failed for user {}", username);
-            }
-        }
-        return token;
+        return user;
     }
 
     /**
@@ -62,7 +50,8 @@ public class UserService {
      * @return Optional of user, empty if the user already exists.
      */
     public Optional<User> signup(String username, String password, String firstName, String lastName) {
-        LOGGER.info("New user attempting to sign in");
+        LOGGER.info("New user attempting to sign up");
+
         Optional<User> user = Optional.empty();
         if (!userRepository.findByUsername(username).isPresent()) {
             Optional<Role> optionalRole = roleRepository.findByRoleName("ROLE_ADMIN");

@@ -1,6 +1,7 @@
 package com.fjsimon.nexus.store.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -41,13 +42,24 @@ public class WebSecurityConfiguration {
     private JwtTokenFilter jwtTokenFilter;
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain swaggerSecurity(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/public/**")
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable);
+
+        return http.build();
+    }
+
+    @Bean
     @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // Entry points
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/", "/login", "/books/resource", "/index.html", "/*.js", "/*.ico", "/*.css").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/signin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/login", "/users/refresh", "/users/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> {})
@@ -58,17 +70,6 @@ public class WebSecurityConfiguration {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // Add JWT token filter
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
-
-    @Bean
-    @Order(1)
-    public SecurityFilterChain swaggerSecurity(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/public/**")
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable);
-
         return http.build();
     }
 
