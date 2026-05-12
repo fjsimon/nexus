@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import LinkDataService from '../service/LinkDataService.js';
-import Pagination from "react-js-pagination";
+import DataTable from "react-data-table-component";
 
 class LinksComponent extends Component {
 
@@ -18,6 +18,7 @@ class LinksComponent extends Component {
         }
         this.refreshLinks = this.refreshLinks.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleDownload = this.handleDownload.bind(this);
@@ -28,7 +29,7 @@ class LinksComponent extends Component {
         this.refreshLinks(this.state.activePage);
     }
 
-    handleChange(pageNumber) {
+    handleChange(event) {
 
         this.setState({value: event.target.value});
     }
@@ -49,14 +50,17 @@ class LinksComponent extends Component {
         event.preventDefault();
     }
 
-    handleDelete = (e, s) => {
+    handleDelete = (e) => {
 
-        const checkedBoxes = [...this.state.checkedBoxes];
-        let checkedOptions = checkedBoxes.map(s => s.id);
-        LinkDataService.deleteLinks(checkedOptions).then((response) => {
-            this.refreshLinks(this.state.activePage);
-        });
         e.preventDefault();
+
+        const checkedOptions = this.state.checkedBoxes.map(s => s.id);
+        LinkDataService
+            .deleteLinks(checkedOptions)
+            .then(() => {
+                this.refreshLinks(this.state.activePage);
+                this.setState({checkedBoxes: []});
+            });
     }
 
     handleDownload = (e, s) => {
@@ -86,16 +90,9 @@ class LinksComponent extends Component {
          e.preventDefault();
     }
 
-    handleCheckbox = (e, s) => {
+    handleCheckbox = ({ selectedRows }) => {
 
-        const checkedBoxes = [...this.state.checkedBoxes];
-        if(e.target.checked) {
-          checkedBoxes.push(s);
-        } else {
-          const index = checkedBoxes.findIndex((ch) => ch.id === s.id);
-          checkedBoxes.splice(index, 1);
-        }
-        this.setState({checkedBoxes});
+        this.setState({checkedBoxes: selectedRows});
     }
 
     refreshLinks(page) {
@@ -110,56 +107,87 @@ class LinksComponent extends Component {
             )
     }
 
-    listItems = () => !!this.state.links && this.state.links.map(item => (
-        <li key={item.id}>
-            <input type="checkbox"
-                   value={item.id}
-
-                   onChange = {(e) => this.handleCheckbox(e, item)}
-            />
-            <a href={item.link}>{item.link}</a>
-        </li>
-    ));
-
     render() {
+
+        const columns = [
+            {
+                name: 'ID',
+                selector: row => row.id,
+                sortable: true,
+                width: '100px'
+            },
+            {
+                name: 'Link',
+                selector: row => row.link,
+                sortable: true,
+                cell: row => (
+                    <a
+                        href={row.link}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        {row.link}
+                    </a>
+                )
+            }
+        ];
+
         return (
+
             <div className="app">
+
                 <fieldset>
-                <form onSubmit={this.handleSubmit}>
-                    <input type="text"
-                        placeholder="Copy a link ..."
-                        value={this.state.value}
-                        onChange={this.handleChange} />
 
-                    <input type="submit"
-                        value="add"
-                        disabled={!this.state.value.trim().length}/>
+                    <form onSubmit={this.handleSubmit}>
 
-                    <input type="button"
-                        value="download"
-                        onClick={this.handleDownload}/>
+                        <input
+                            type="text"
+                            placeholder="Copy a link ..."
+                            value={this.state.value}
+                            onChange={this.handleChange}
+                        />
 
-                    <input type="button"
-                        value="delete"
-                        onClick={this.handleDelete}
-                        disabled={!this.state.checkedBoxes.length}/>
-                </form>
+                        <input
+                            type="submit"
+                            value="add"
+                            disabled={!this.state.value.trim().length}
+                        />
+
+                        <input
+                            type="button"
+                            value="download"
+                            onClick={this.handleDownload}
+                        />
+
+                        <input
+                            type="button"
+                            value="delete"
+                            onClick={this.handleDelete}
+                            disabled={!this.state.checkedBoxes.length}
+                        />
+
+                    </form>
+
                 </fieldset>
-                <ul className="container">{this.listItems()}</ul>
-                  <div className="d-flex justify-content-center">
-                    <Pagination
-                     hideNavigation
-                     activePage={this.state.activePage}
-                     itemsCountPerPage={this.state.itemsCountPerPage}
-                     totalItemsCount={this.state.totalItemsCount}
-                     pageRangeDisplayed={10}
-                     itemClass='page-item'
-                     linkClass='btn btn-light'
-                     onChange={this.handlePageChange.bind(this)}
-                     />
-                   </div>
+
+                <DataTable
+                    title="Links"
+                    columns={columns}
+                    data={this.state.links}
+                    pagination
+                    paginationServer
+                    paginationTotalRows={this.state.totalItemsCount}
+                    paginationPerPage={this.state.itemsCountPerPage}
+                    onChangePage={this.handlePageChange}
+                    selectableRows
+                    onSelectedRowsChange={this.handleCheckbox}
+                    highlightOnHover
+                    pointerOnHover
+                    responsive
+                />
+
             </div>
-       );
+        );
     }
 }
 
