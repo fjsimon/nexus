@@ -1,5 +1,7 @@
 package com.fjsimon.nexus.store.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fjsimon.nexus.store.client.OpenLibraryClient;
 import com.fjsimon.nexus.store.exceptions.NotFoundException;
 import com.fjsimon.nexus.store.model.Book;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
@@ -35,30 +38,50 @@ public class LibraryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryController.class);
 
-    @Value("${app.files.path}")
-    private String path;
+//    @Value("${app.files.path}")
+//    private String path;
+
+    @Value("${app.files.scan.path}")
+    private Resource fileResource;
 
     @Autowired
     private OpenLibraryClient openLibraryClient;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+//    @GetMapping(value = "/scan", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<FileResponse> scan(@RequestParam(value="name", defaultValue="World") String name) {
+//
+//        LOGGER.info(String.format("GET /books path : %s", path));
+//
+//        Path file_path = Paths.get(path);
+//        try (Stream<Path> stream = Files.walk(file_path)) {
+//            return stream
+//                    .filter(Files::isRegularFile)
+//                    .filter(path-> path.getFileName().toString().contains("pdf"))
+//                    .map(path -> FileResponse
+//                            .builder()
+//                            .name(path.getFileName().toString())
+//                            .path(path.toString()).build())
+//                    .collect(Collectors.toList());
+//
+//        } catch (IOException e) {
+//            LOGGER.info(e.getMessage(), e);
+//        }
+//
+//        return Collections.emptyList();
+//    }
+
     @GetMapping(value = "/scan", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FileResponse> scan(@RequestParam(value="name", defaultValue="World") String name) {
+    public List<FileResponse> scan() {
 
-        LOGGER.info(String.format("GET /books path : %s", path));
+        try (InputStream inputStream = fileResource.getInputStream()) {
 
-        Path file_path = Paths.get(path);
-        try (Stream<Path> stream = Files.walk(file_path)) {
-            return stream
-                    .filter(Files::isRegularFile)
-                    .filter(path-> path.getFileName().toString().contains("pdf"))
-                    .map(path -> FileResponse
-                            .builder()
-                            .name(path.getFileName().toString())
-                            .path(path.toString()).build())
-                    .collect(Collectors.toList());
-
+            return objectMapper.readValue(inputStream, new TypeReference<List<FileResponse>>() {});
         } catch (IOException e) {
-            LOGGER.info(e.getMessage(), e);
+
+            LOGGER.error("Failed to read JSON resource", e);
         }
 
         return Collections.emptyList();
