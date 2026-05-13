@@ -13,52 +13,40 @@ class LinksComponent extends Component {
             value: '',
             activePage: 1,
             totalPages: null,
-            itemsCountPerPage:0,
+            itemsCountPerPage:10,
             totalItemsCount:0
         }
-        this.refreshLinks = this.refreshLinks.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handlePageChange = this.handlePageChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
-        this.handleDownload = this.handleDownload.bind(this);
     }
 
     componentDidMount() {
 
-        this.refreshLinks(this.state.activePage);
+        this.refreshLinks(this.state.activePage, this.state.itemsCountPerPage);
     }
 
-    handleChange(event) {
+    handleChange = (event) => {
 
         this.setState({value: event.target.value});
     }
 
-    handlePageChange(pageNumber) {
-
-        this.setState({activePage: pageNumber});
-        this.refreshLinks(pageNumber);
-    }
-
-    handleSubmit(event) {
+    handleSubmit = (event) => {
 
         LinkDataService.saveLink(this.state.value).then((response) => {
-            this.refreshLinks(this.state.activePage);
+            this.refreshLinks(this.state.activePage, this.state.itemsCountPerPage);
         });
 
         this.setState({value: ''});
         event.preventDefault();
     }
 
-    handleDelete = (e) => {
+    handleDelete = (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         const checkedOptions = this.state.checkedBoxes.map(s => s.id);
         LinkDataService
             .deleteLinks(checkedOptions)
             .then(() => {
-                this.refreshLinks(this.state.activePage);
+                this.refreshLinks(this.state.activePage, this.state.itemsCountPerPage);
                 this.setState({checkedBoxes: []});
             });
     }
@@ -95,17 +83,57 @@ class LinksComponent extends Component {
         this.setState({checkedBoxes: selectedRows});
     }
 
-    refreshLinks(page) {
-        LinkDataService.retrieveLinks(page-1)
-            .then(
-                response => {
-                    this.setState({totalPages: response.data.totalPages})
-                    this.setState({totalItemsCount: response.data.totalElements})
-                    this.setState({itemsCountPerPage: response.data.size})
-                    this.setState({links: response.data.content})
-                }
-            )
-    }
+    handlePageChange = (page) => {
+
+        this.setState(
+            {
+                activePage: page
+            },
+            () => {
+                this.refreshLinks(
+                    this.state.activePage,
+                    this.state.itemsCountPerPage
+                );
+            }
+        );
+    };
+
+    handleRowsPerPageChange = (newPerPage) => {
+
+        this.setState(
+            {
+                itemsCountPerPage: newPerPage,
+                activePage: 1
+            },
+            () => {
+                this.refreshLinks(
+                    this.state.activePage,
+                    this.state.itemsCountPerPage
+                );
+            }
+        );
+    };
+
+    refreshLinks = (
+        page = 1,
+        rowPerPage = this.state.itemsCountPerPage
+    ) => {
+
+        LinkDataService.retrieveLinks(page - 1, rowPerPage)
+            .then((response) => {
+
+                this.setState({
+                    totalPages: response.data.totalPages,
+                    totalItemsCount: response.data.totalElements,
+                    itemsCountPerPage: response.data.size,
+                    links: response.data.content
+                });
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
 
     render() {
 
@@ -176,11 +204,13 @@ class LinksComponent extends Component {
                     data={this.state.links}
                     pagination
                     paginationServer
-                    paginationTotalRows={this.state.totalItemsCount}
                     paginationPerPage={this.state.itemsCountPerPage}
+                    paginationTotalRows={this.state.totalItemsCount}
+                    paginationDefaultPage={this.state.activePage}
                     onChangePage={this.handlePageChange}
-                    selectableRows
+                    onChangeRowsPerPage={this.handleRowsPerPageChange}
                     onSelectedRowsChange={this.handleCheckbox}
+                    selectableRows
                     highlightOnHover
                     pointerOnHover
                     responsive

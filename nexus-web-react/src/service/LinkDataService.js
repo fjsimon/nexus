@@ -13,9 +13,9 @@ class LinkDataService {
         return api.post(`/links`, payload);
     }
 
-    retrieveLinks(page) {
+    retrieveLinks(page, size) {
 
-        return api.get(`/links?page=${page}&size=10`);
+        return api.get(`/links?page=${page}&size=${size}`);
     }
 
     deleteLinks(linkIds) {
