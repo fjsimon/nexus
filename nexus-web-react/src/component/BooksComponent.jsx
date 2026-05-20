@@ -2,6 +2,54 @@ import React, { Component } from 'react'
 import BookDataService from '../service/BookDataService.js';
 import DataTable from 'react-data-table-component';
 
+const ExpandedComponent = ({ data, isbn, onIsbnChange, onSubmit, book }) => (
+    <div style={{ padding: "1rem" }}>
+        <form onSubmit={onSubmit}>
+            <input
+                type="text"
+                placeholder="Copy ISBN ..."
+                value={isbn}
+                onChange={onIsbnChange}
+            />
+            <input
+                type="submit"
+                value="search"
+                disabled={!isbn.trim().length}
+            />
+        </form>
+
+        {book && (
+            <div className="book-card">
+                <img className="cover" src={book.cover?.medium} alt={book.title} />
+
+                <h2>{book.title}</h2>
+
+                <p><strong>Author:</strong> {book.authors?.map(a => a.name).join(", ")}</p>
+
+                <p><strong>Published:</strong> {book.publish_date}</p>
+
+                {book.notes && (
+                    <p className="notes">
+                        <strong>Notes:</strong> {book.notes}
+                    </p>
+                )}
+
+                <h3>Subjects</h3>
+                <ul>
+                    {book.subjects?.map(s => (
+                        <li key={s.name}>{s.name}</li>
+                    ))}
+                </ul>
+
+                <a href={book.url} target="_blank" rel="noopener noreferrer">
+                    View on OpenLibrary
+                </a>
+            </div>
+        )}
+    </div>
+);
+
+
 class BooksComponent extends Component {
 
     constructor(props) {
@@ -11,8 +59,7 @@ class BooksComponent extends Component {
             checkedBoxes: [],
             isbn: '',
             description: 'description',
-            selectedItem: 'http://localhost:8080/books/resource?path=/home/r00t/books/DevOps/dockerupandrunning.pdf',
-            isVisible: false
+            selectedItem: 'http://localhost:8080/books/resource?path=/home/r00t/books/DevOps/dockerupandrunning.pdf'
         }
 
         this.refreshBooks = this.refreshBooks.bind(this);
@@ -33,15 +80,8 @@ class BooksComponent extends Component {
             )
     }
 
-    handleCheckbox = (selected_item) => {
-
-        console.log(selected_item);
-
-        if ( selected_item.selectedCount ) {
-            this.setState({isVisible: true});
-        } else {
-            this.setState({isVisible: false});
-        }
+    handleCheckbox = ({ selectedRows }) => {
+        this.setState({ selectedRow: selectedRows[0] || null });
     }
 
     handleChange(event) {
@@ -89,50 +129,18 @@ class BooksComponent extends Component {
                     pagination
                     selectableRows
                     selectableRowsSingle
+                    expandableRows
+                    c={(props) => (
+                        <ExpandedComponent
+                            data={props.data}
+                            isbn={this.state.isbn}
+                            onIsbnChange={this.handleChange}
+                            onSubmit={this.handleSubmit}
+                            book={book}
+                        />
+                    )}
                     onSelectedRowsChange={this.handleCheckbox}
                 />
-
-                <fieldset className={this.state.isVisible ? undefined : 'hidden'}>
-                    <form onSubmit={this.handleSubmit}>
-                        <input type="text"
-                               placeholder="Copy ISBN ..."
-                               value={this.state.isbn}
-                               onChange={this.handleChange} />
-
-                        <input type="submit"
-                               value="search"
-                               disabled={!this.state.isbn.trim().length}/>
-                    </form>
-                </fieldset>
-
-                {book && (
-                    <div className="book-card">
-                        <img className="cover" src={book.cover?.medium} alt={book.title} />
-
-                        <h2>{book.title}</h2>
-
-                        <p><strong>Author:</strong> {book.authors?.map(a => a.name).join(", ")}</p>
-
-                        <p><strong>Published:</strong> {book.publish_date}</p>
-
-                        {book.notes && (
-                            <p className="notes">
-                                <strong>Notes:</strong> {book.notes}
-                            </p>
-                        )}
-
-                        <h3>Subjects</h3>
-                        <ul>
-                            {book.subjects?.map(s => (
-                                <li key={s.name}>{s.name}</li>
-                            ))}
-                        </ul>
-
-                        <a href={book.url} target="_blank" rel="noopener noreferrer">
-                            View on OpenLibrary
-                        </a>
-                    </div>
-                )}
 
             </div>
         );
